@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: authenticator
+  cloud:
+    config:
+      enabled: false
+    aws:
+      paramstore:
+        enabled: false
+  token:
+    expiration_time:
+server:
+  port: 8082
