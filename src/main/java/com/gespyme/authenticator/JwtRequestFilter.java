@@ -1,6 +1,7 @@
 package com.gespyme.authenticator;
 
 import com.gespyme.authenticator.auth.TokenExtractor;
+import com.gespyme.commons.exeptions.InternalServerError;
 import com.gespyme.commons.exeptions.UnauthorizedException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,8 +28,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+        try {
+            perfomSecurityOperations(request, response, chain);
+        } catch (Exception e) {
+            throw new InternalServerError("Unexpected server error", e);
+        }
+    }
 
-        if ("/login".equals(request.getRequestURI()) && "POST".equals(request.getMethod())) {
+    private void perfomSecurityOperations(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        if (("/h2-console".equals(request.getRequestURI()) || "/login".equals(request.getRequestURI()))) {
             chain.doFilter(request, response);
             return;
         }

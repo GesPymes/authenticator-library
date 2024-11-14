@@ -11,3 +11,7 @@ spring:
     expiration_time:
 server:
   port: 8082
+
+  error:
+    whitelabel:
+      enabled: false
