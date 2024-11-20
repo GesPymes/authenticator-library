@@ -15,3 +15,7 @@ server:
   error:
     whitelabel:
       enabled: false
+
+jwt:
+  allowed:
+    urls: "/login"

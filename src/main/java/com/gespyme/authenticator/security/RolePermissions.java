@@ -1,10 +1,11 @@
-package com.gespyme.authenticator.model;
+package com.gespyme.authenticator.security;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @RequiredArgsConstructor
-public enum Role {
+public enum RolePermissions {
 
   ADMIN(List.of("/customer", "/user", "/employee", "/invoice", "/job")),
   SYSTEM(List.of("/invoice", "/job")),

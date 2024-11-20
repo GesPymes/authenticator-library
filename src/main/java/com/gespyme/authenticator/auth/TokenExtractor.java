@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Map;
 
 public class TokenExtractor {
 
@@ -33,6 +34,16 @@ public class TokenExtractor {
     public static Date getExpirationDate(String token) {
         Claims claims = extractClaim(token);
         return claims.getExpiration();
+    }
+
+    public static Date getIssuedAt(String token) {
+        Claims claims = extractClaim(token);
+        return claims.getIssuedAt();
+    }
+
+    public static Map<String, Object> getClaims(String token) {
+        Claims claims = extractClaim(token);
+        return Map.of("role", claims.get("role", String.class));
     }
 
     public static boolean isTokenExpired(String token) {

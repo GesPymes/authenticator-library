@@ -1,6 +1,7 @@
 package com.gespyme.authenticator.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.gespyme.authenticator.security.RolePermissions;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 public class UserAccountDetails {
     private String email;
     private String password;
-    private Role role;
+    private RolePermissions role;
     private LocalDateTime lastTimeLoggedIn;
     private LocalDateTime creationDate;
     private LocalDateTime lastModificationDate;
