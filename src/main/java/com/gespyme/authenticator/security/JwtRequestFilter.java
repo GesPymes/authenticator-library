@@ -2,7 +2,6 @@ package com.gespyme.authenticator.security;
 
 import com.gespyme.authenticator.auth.TokenExtractor;
 import com.gespyme.commons.exeptions.ForbiddenException;
-import com.gespyme.commons.exeptions.InternalServerError;
 import com.gespyme.commons.exeptions.UnauthorizedException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -32,14 +31,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain chain)
       throws ServletException, IOException {
-    try {
-      perfomSecurityOperations(request, response, chain);
-    } catch (Exception e) {
-      throw new InternalServerError("Unexpected server error", e);
-    }
+      performSecurityOperations(request, response, chain);
   }
 
-  private void perfomSecurityOperations(
+  private void performSecurityOperations(
       HttpServletRequest request, HttpServletResponse response, FilterChain chain)
       throws ServletException, IOException {
     if (filterAllowedUrls(request)) {
@@ -51,10 +46,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     validateToken(token);
     String user = TokenExtractor.getSubject(token);
     String role = TokenExtractor.getRole(token);
-    if (shouldAuthenticateUser(user, role, request.getRequestURI())) {
+    if (shouldAuthenticateUser(user, role, request.getRequestURI(), request.getMethod())) {
       setAuthenticationIsSpringSecurityContext(user, role, token, request);
+      chain.doFilter(request, response);
+      return;
     }
-    chain.doFilter(request, response);
+    throw new ForbiddenException("User not authorized to perform the operation");
   }
 
   private boolean filterAllowedUrls(HttpServletRequest request)
@@ -62,15 +59,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     return allowedUrls.stream().anyMatch(url -> url.equals(request.getRequestURI()));
   }
 
-  private boolean shouldAuthenticateUser(String user, String role, String path) {
+  private boolean shouldAuthenticateUser(String user, String role, String path, String method) {
     return user != null
         && SecurityContextHolder.getContext().getAuthentication() == null
-        && isAllowedUser(role, path);
+        && isAllowedUser(role, path, method);
   }
 
-  private boolean isAllowedUser(String role, String path) {
+  private boolean isAllowedUser(String role, String path, String method) {
     try {
-      return RolePermissions.valueOf(role).isAllowed(path);
+      return RolePermissions.valueOf(role).isAllowed(path, method);
     } catch (IllegalArgumentException e) {
       throw new ForbiddenException("Invalid role");
     }
