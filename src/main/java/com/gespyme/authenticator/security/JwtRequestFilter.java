@@ -56,7 +56,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
   private boolean filterAllowedUrls(HttpServletRequest request)
       throws IOException, ServletException {
-    return allowedUrls.stream().anyMatch(url -> url.equals(request.getRequestURI()));
+    return allowedUrls.stream().anyMatch(url -> request.getRequestURI().startsWith(url));
   }
 
   private boolean shouldAuthenticateUser(String user, String role, String path, String method) {

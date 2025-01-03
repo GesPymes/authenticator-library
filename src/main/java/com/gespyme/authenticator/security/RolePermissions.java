@@ -20,8 +20,12 @@ public enum RolePermissions {
 
   SYSTEM(
       Map.of(
-          "/invoice", allMethodsList(),
-          "/job", allMethodsList())),
+          "/invoice",
+          allMethodsList(),
+          "/appointment",
+          allMethodsList(),
+          "/job",
+          allMethodsList())),
 
   USER(
       Map.of(
